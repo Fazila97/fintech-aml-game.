@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="az">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FinTech AML Detective</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    color:#edfaff;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 15% 0%,#123f5b 0%,transparent 35%),
+        radial-gradient(circle at 90% 10%,#123b50 0%,transparent 30%),
+        #040b12;
+}
+
+.container{
+    width:min(950px,94%);
+    margin:auto;
+    padding:30px 0 60px;
+}
+
+.header{
+    text-align:center;
+    margin-bottom:25px;
+}
+
+.logo{font-size:55px}
+
+h1{
+    margin:5px 0;
+    color:#67e8f9;
+    font-size:36px;
+}
+
+.subtitle{
+    color:#8fa8b7;
+}
+
+.topbar{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:12px;
+}
+
+.badge,.score,.timer{
+    background:#0a1d2b;
+    border:1px solid #24485b;
+    border-radius:12px;
+    padding:11px 16px;
+}
+
+.timer{
+    color:#5eead4;
+    font-weight:bold;
+    min-width:110px;
+    text-align:center;
+}
+
+.timer.warning{
+    color:#facc15;
+    border-color:#facc15;
+}
+
+.timer.danger{
+    color:#fb7185;
+    border-color:#fb7185;
+    animation:pulse .7s infinite;
+}
+
+@keyframes pulse{
+    50%{opacity:.45}
+}
+
+.progress{
+    height:7px;
+    background:#122938;
+    border-radius:20px;
+    overflow:hidden;
+    margin-bottom:18px;
+}
+
+.progress-bar{
+    height:100%;
+    width:20%;
+    background:linear-gradient(90deg,#22d3ee,#2dd4bf);
+    transition:.4s;
+}
+
+.card{
+    background:rgba(7,21,32,.97);
+    border:1px solid #244454;
+    border-radius:20px;
+    padding:27px;
+    box-shadow:0 20px 60px rgba(0,0,0,.35);
+}
+
+.label{
+    color:#38bdf8;
+    font-size:12px;
+    font-weight:bold;
+    letter-spacing:2px;
+}
+
+.title{
+    font-size:28px;
+    font-weight:800;
+    margin:9px 0 15px;
+}
+
+.story{
+    color:#c1d1da;
+    line-height:1.75;
+    font-size:16px;
+}
+
+.evidence{
+    margin-top:20px;
+    padding:18px;
+    background:#06131d;
+    border:1px solid #1d3949;
+    border-radius:15px;
+}
+
+.evidence-title{
+    color:#67e8f9;
+    font-weight:bold;
+    margin-bottom:8px;
+}
+
+.evidence-item{
+    padding:9px 0;
+    border-bottom:1px solid #16303e;
+    line-height:1.5;
+}
+
+.evidence-item:last-child{
+    border-bottom:0;
+}
+
+.question{
+    margin-top:25px;
+    font-size:21px;
+    font-weight:800;
+    line-height:1.5;
+}
+
+.answers{
+    display:grid;
+    gap:11px;
+    margin-top:17px;
+}
+
+.answer{
+    width:100%;
+    padding:16px;
+    border-radius:13px;
+    border:1px solid #285064;
+    background:#0b2536;
+    color:#edfaff;
+    cursor:pointer;
+    text-align:left;
+    font-size:15.5px;
+    line-height:1.55;
+    transition:.2s;
+}
+
+.answer:hover{
+    background:#10364a;
+    border-color:#42c9e8;
+    transform:translateY(-1px);
+}
+
+.answer.correct{
+    background:#084632;
+    border-color:#34d399;
+}
+
+.answer.wrong{
+    background:#541f2b;
+    border-color:#fb7185;
+}
+
+.answer:disabled{
+    cursor:default;
+}
+
+.feedback{
+    display:none;
+    margin-top:18px;
+    padding:17px;
+    background:#06131d;
+    border-left:4px solid #22d3ee;
+    border-radius:12px;
+    line-height:1.7;
+}
+
+.feedback-title{
+    font-weight:bold;
+    margin-bottom:7px;
+}
+
+.next{
+    display:none;
+    width:100%;
+    margin-top:14px;
+    padding:15px;
+    border:0;
+    border-radius:12px;
+    background:#22d3ee;
+    color:#03202b;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.next:hover{
+    background:#67e8f9;
+}
+
+.result{
+    display:none;
+    text-align:center;
+}
+
+.trophy{font-size:70px}
+
+.final-score{
+    font-size:75px;
+    font-weight:900;
+    color:#5eead4;
+    margin:10px;
+}
+
+.restart{
+    border:0;
+    padding:14px 25px;
+    border-radius:12px;
+    background:#38bdf8;
+    color:#03202b;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.footer{
+    margin-top:25px;
+    color:#627c8b;
+    font-size:12px;
+    line-height:1.6;
+}
+
+@media(max-width:600px){
+
+    .container{
+        padding-top:20px;
+    }
+
+    .card{
+        padding:18px;
+    }
+
+    h1{
+        font-size:28px;
+    }
+
+    .title{
+        font-size:23px;
+    }
+
+    .question{
+        font-size:19px;
+    }
+
+    .answer{
+        font-size:15px;
+    }
+
+    .topbar{
+        flex-wrap:wrap;
+    }
+
+    .badge,.score,.timer{
+        flex:1;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<header class="header">
+    <div class="logo">💳🕵️</div>
+
+    <h1>FINTECH AML DETECTIVE</h1>
+
+    <div class="subtitle">
+        Digital Finance • KYC • BO • Transaction Monitoring • Risk
+    </div>
+</header>
+
+
+<div id="game">
+
+    <div class="topbar">
+
+        <div class="badge" id="caseNumber">
+            CASE 1 / 5
+        </div>
+
+        <div class="timer" id="timer">
+            ⏱️ 01:00
+        </div>
+
+        <div class="score">
+            🏆 Xal: <strong id="score">0</strong>
+        </div>
+
+    </div>
+
+
+    <div class="progress">
+        <div class="progress-bar" id="progress"></div>
+    </div>
+
+
+    <div class="card">
+
+        <div class="label">
+            FINTECH AML INVESTIGATION
+        </div>
+
+        <div class="title" id="title"></div>
+
+        <div class="story" id="story"></div>
+
+
+        <div class="evidence">
+
+            <div class="evidence-title">
+                🔎 ARAŞDIRMA MƏLUMATLARI
+            </div>
+
+            <div id="evidenceList"></div>
+
+        </div>
+
+
+        <div class="question" id="question"></div>
+
+        <div class="answers" id="answers"></div>
+
+        <div class="feedback" id="feedback"></div>
+
+        <button class="next" id="next">
+            Növbəti case →
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="card result" id="result">
+
+    <div class="trophy">
+        🏆
+    </div>
+
+    <h2>
+        AML araşdırması tamamlandı
+    </h2>
+
+    <p>
+        Sənin nəticən:
+    </p>
+
+    <div class="final-score" id="finalScore">
+        0 / 100
+    </div>
+
+    <p id="resultText"></p>
+
+    <button class="restart" id="restart">
+        🔄 Yenidən oyna
+    </button>
+
+    <div class="footer">
+        Bu oyun təlim məqsədlidir.
+        Real AML/KYC qərarları zamanı qüvvədə olan
+        qanunvericilik, normativ tələblər və təşkilatın
+        daxili prosedurları nəzərə alınmalıdır.
+    </div>
+
+</div>
+
+</div>
+
+
+<script>
+
+/* ==============================
+   SUALLAR
+============================== */
+
+const cases = [
+
+{
+    title:"CASE 01 — Remote Onboarding",
+
+    story:
+    "X FinTech MMC mobil tətbiq vasitəsilə yeni müştəri qəbul edir. Müştəri fiziki ofisə gəlmədən elektron formada qeydiyyatdan keçir. E-identifikasiya uğurlu nəticələnir, lakin təqdim edilmiş ünvan məlumatı digər əldə olunan məlumatlarla uyğun gəlmir.",
+
+    evidence:[
+        "Onboarding tam məsafədən aparılıb",
+        "Elektron identifikasiya uğurla tamamlanıb",
+        "Ünvan məlumatında uyğunsuzluq var",
+        "Müştəri əlavə sənəd təqdim edə bilər",
+        "Platforma avtomatik risk qiymətləndirməsindən istifadə edir"
+    ],
+
+    question:
+    "AML əməkdaşı üçün ən uyğun növbəti yanaşma hansıdır?",
+
+    answers:[
+
+        "Elektron identifikasiya uğurlu olduğuna görə onboarding-i tamamlayaraq uyğunsuzluğu sonrakı monitorinq mərhələsinə keçirmək",
+
+        "Məsafədən münasibət faktorunu nəzərə alaraq uyğunsuz məlumatın etibarlılığını əlavə verifikasiya tədbirləri ilə qiymətləndirmək",
+
+        "Ünvan məlumatındakı uyğunsuzluğu müştərinin avtomatik yüksək risk qrupuna daxil edilməsi üçün əsas hesab etmək",
+
+        "Elektron identifikasiyanın nəticəsini əsas götürərək yalnız əməliyyat profili formalaşdıqdan sonra əlavə yoxlama aparmaq"
+
+    ],
+
+    correct:1,
+
+    explanation:
+    "Elektron identifikasiya uğurlu olsa belə, məlumatlar arasında uyğunsuzluq varsa, həmin məlumatların etibarlılığı və tələb olunan verifikasiya tədbirləri qiymətləndirilməlidir."
+},
+
+
+{
+    title:"CASE 02 — FinTech və BO",
+
+    story:
+    "Y FinTech MMC korporativ müştəri kimi Z MMC-ni qəbul edir. Z MMC-nin sahiblik strukturu bir neçə hüquqi şəxsdən keçir. Araşdırma zamanı bir fiziki şəxsin şirkətin mühüm qərarlarına faktiki təsir göstərdiyi barədə məlumat əldə edilir.",
+
+    evidence:[
+        "Z MMC → Y Holding MMC",
+        "Y Holding MMC → X Invest MMC",
+        "X Invest MMC → Fiziki şəxs A",
+        "Fiziki şəxs B mühüm qərarlara faktiki təsir göstərə bilər",
+        "Direktorların təyin edilməsi ilə bağlı əlavə məlumat var"
+    ],
+
+    question:
+    "BO araşdırması üçün ən dolğun yanaşma hansıdır?",
+
+    answers:[
+
+        "Sahiblik zəncirinin sonundakı fiziki şəxsi müəyyən edib faktiki qərarvermə məlumatını ayrıca risk göstəricisi kimi saxlamaq",
+
+        "Formal sahiblik strukturunu əsas götürərək fiziki şəxslərin nəzarət imkanlarını yalnız ziddiyyət yarandıqda qiymətləndirmək",
+
+        "Sahiblik zəncirini və faktiki nəzarət imkanlarını birlikdə araşdıraraq BO müəyyənləşdirməsini tamamlayan məlumatları qiymətləndirmək",
+
+        "Direktorların təyin edilməsində təsiri olan şəxsi əsas götürərək sahiblik zəncirinin digər elementlərini ikinci dərəcəli hesab etmək"
+
+    ],
+
+    correct:2,
+
+    explanation:
+    "BO təhlilində formal sahibliklə yanaşı faktiki nəzarət imkanları da nəzərə alınmalıdır. Sahiblik və nəzarət barədə məlumatlar birlikdə qiymətləndirilməlidir."
+},
+
+
+{
+    title:"CASE 03 — Transaction Monitoring",
+
+    story:
+    "A FinTech istifadəçisinin əvvəlki aylarda əməliyyatları əsasən 1.000–3.000 AZN diapazonunda olub. Son iki gün ərzində hesabdan çoxsaylı kiçik məbləğli köçürmələr həyata keçirilir. Daha sonra müxtəlif hesablardan vəsaitlərin bir hissəsi geri daxil olur.",
+
+    evidence:[
+        "Əvvəlki əməliyyat profili nisbətən sabitdir",
+        "Yeni əməliyyat davranışı əvvəlki profildən fərqlənir",
+        "Çoxsaylı kiçik məbləğli köçürmələr var",
+        "Müxtəlif hesablardan geri daxilolmalar müşahidə edilir",
+        "Əməliyyatların iqtisadi məqsədi hələ aydın deyil"
+    ],
+
+    question:
+    "AML analitiki üçün ən uyğun yanaşma hansıdır?",
+
+    answers:[
+
+        "Məbləğlərin ayrı-ayrılıqda aşağı olması səbəbilə əməliyyatları normal qəbul edib monitorinqi davam etdirmək",
+
+        "Əməliyyatların sayını əsas indikator kimi götürərək hesab üzrə avtomatik məhdudlaşdırma tətbiq etmək",
+
+        "Müştərinin əvvəlki profili ilə yeni davranışı müqayisə edib əməliyyatların əlaqəsini, məqsədini və iqtisadi mahiyyətini araşdırmaq",
+
+        "Geri daxilolmaları əsas risk göstəricisi hesab edərək digər əməliyyatları ayrıca qiymətləndirmədən risk hadisəsi yaratmaq"
+
+    ],
+
+    correct:2,
+
+    explanation:
+    "Əsas məsələ təkcə ayrı-ayrı məbləğlər deyil. Əməliyyat davranışının əvvəlki profilə nisbətən dəyişməsi və əməliyyatların iqtisadi məzmunu birlikdə araşdırılmalıdır."
+},
+
+
+{
+    title:"CASE 04 — Yeni FinTech məhsulu",
+
+    story:
+    "FinTech şirkəti yeni beynəlxalq 'instant transfer' məhsulu istifadəyə vermək istəyir. Məhsul müxtəlif ölkələr arasında sürətli pul köçürmələrinə imkan verir və əməliyyatların böyük hissəsi avtomatlaşdırılmış şəkildə emal olunacaq.",
+
+    evidence:[
+        "Məhsul yeni xidmət kimi təqdim olunur",
+        "Beynəlxalq köçürmələr mümkündür",
+        "Əməliyyatların emalı böyük ölçüdə avtomatlaşdırılır",
+        "Müxtəlif yurisdiksiyalardan istifadə mümkündür",
+        "Əməliyyat sürəti yüksəkdir"
+    ],
+
+    question:
+    "Məhsul istifadəyə verilməzdən əvvəl AML baxımından ən uyğun yanaşma hansıdır?",
+
+    answers:[
+
+        "Məhsulun texniki təhlükəsizlik testlərini tamamlayıb AML monitorinq qaydalarını mövcud məhsullarla eyni saxlamaq",
+
+        "Məhsulun yaratdığı müştəri, coğrafi və əməliyyat risklərini əvvəlcədən qiymətləndirərək uyğun nəzarət mexanizmlərini müəyyən etmək",
+
+        "Məhsulu əvvəlcə məhdud sayda müştəriyə təqdim edib yaranan şübhəli əməliyyatlara əsasən AML nəzarətlərini sonradan formalaşdırmaq",
+
+        "Avtomatlaşdırılmış emal tətbiq edildiyinə görə əsas nəzarəti texniki sistemə həvalə edib yalnız istisna halları manual araşdırmaq"
+
+    ],
+
+    correct:1,
+
+    explanation:
+    "Yeni məhsul və xidmətlərin yaratdığı risklər əvvəlcədən qiymətləndirilməli və həmin risklərə uyğun nəzarət mexanizmləri müəyyən edilməlidir."
+},
+
+
+{
+    title:"FINAL CASE — FinTech AML",
+
+    story:
+    "B FinTech MMC yeni korporativ müştəri qəbul edir. Müştərinin mürəkkəb sahiblik strukturu var. Onboarding tam məsafədən aparılıb. E-identifikasiya prosesində texniki uyğunsuzluq qeydə alınıb. Müştərinin təqdim etdiyi gözlənilən aylıq dövriyyə ilə ilk həftədə həyata keçirilən əməliyyatların həcmi arasında ciddi fərq yaranıb.",
+
+    evidence:[
+        "Çoxpilləli sahiblik strukturu",
+        "BO-nun müəyyən edilməsi üçün bir neçə hüquqi şəxs araşdırılır",
+        "Onboarding məsafədən aparılıb",
+        "E-identifikasiya prosesində uyğunsuzluq qeydə alınıb",
+        "Gözlənilən əməliyyat həcmi ilə faktiki əməliyyatlar fərqlənir",
+        "Bir neçə ölkəyə çoxsaylı köçürmələr həyata keçirilib",
+        "Müştəri profilindəki məlumatlar yenidən qiymətləndirilməlidir"
+    ],
+
+    question:
+    "Bu case üzrə ən dolğun AML yanaşması hansıdır?",
+
+    answers:[
+
+        "Əsas diqqəti beynəlxalq köçürmələrə yönəldərək əməliyyatların iqtisadi məqsədini araşdırmaq və digər məlumatları əlavə faktor kimi nəzərdən keçirmək",
+
+        "BO strukturunu və onboarding prosesini tamamlayaraq faktiki əməliyyat həcminin fərqini ayrıca monitorinq hadisəsi kimi qiymətləndirmək",
+
+        "E-identifikasiya məsələsini həll etdikdən sonra müştərinin əməliyyat profilini yenidən formalaşdıraraq risk qiymətləndirməsini yeniləmək",
+
+        "Sahiblik, faktiki nəzarət, verifikasiya, müştəri profili, coğrafi və əməliyyat risklərini birlikdə qiymətləndirərək riskə uyğun tədbirləri müəyyən etmək"
+
+    ],
+
+    correct:3,
+
+    explanation:
+    "Final case-də bir neçə risk elementi eyni vaxtda mövcuddur. Sahiblik və BO, verifikasiya, məsafədən münasibət, müştərinin gözlənilən profili və faktiki əməliyyat davranışı birlikdə qiymətləndirilməlidir."
+}
+
+];
+
+
+/* ==============================
+   DƏYİŞƏNLƏR
+============================== */
+
+let currentCase=0;
+let score=0;
+let answered=false;
+
+let timeLeft=60;
+let timerInterval;
+
+
+/* ==============================
+   TIMER
+============================== */
+
+function startTimer(){
+
+    clearInterval(timerInterval);
+
+    timeLeft=60;
+
+    updateTimer();
+
+    timerInterval=setInterval(()=>{
+
+        timeLeft--;
+
+        updateTimer();
+
+        if(timeLeft<=0){
+
+            clearInterval(timerInterval);
+
+            timeExpired();
+
+        }
+
+    },1000);
+}
+
+
+function updateTimer(){
+
+    const timer=document.getElementById("timer");
+
+    const minutes=
+        Math.floor(timeLeft/60);
+
+    const seconds=
+        timeLeft%60;
+
+    timer.textContent=
+        `⏱️ ${String(minutes).padStart(2,"0")}:${String(seconds).padStart(2,"0")}`;
+
+
+    timer.classList.remove(
+        "warning",
+        "danger"
+    );
+
+
+    if(timeLeft<=10){
+
+        timer.classList.add("danger");
+
+    }else if(timeLeft<=20){
+
+        timer.classList.add("warning");
+
+    }
+}
+
+
+/* ==============================
+   VAXT BİTDİ
+============================== */
+
+function timeExpired(){
+
+    if(answered)return;
+
+    answered=true;
+
+    const data=cases[currentCase];
+
+    const buttons=
+        document.querySelectorAll(".answer");
+
+    buttons.forEach(b=>{
+        b.disabled=true;
+    });
+
+
+    /* Düzgün cavabı yaşıl göstər */
+
+    buttons.forEach(b=>{
+
+        const text=
+            b.textContent
+            .replace(/^[A-D]\)\s*/,"")
+            .trim();
+
+        if(text===data.answers[data.correct]){
+
+            b.classList.add("correct");
+
+        }
+
+    });
+
+
+    document.getElementById("feedback")
+        .innerHTML=
+        `<div class="feedback-title">
+            ⏰ Vaxt bitdi — 0 xal
+         </div>
+         Cavab üçün ayrılmış 60 saniyə tamamlandı.
+         Düzgün cavab yaşıl rənglə göstərildi.
+         <br><br>
+         ${data.explanation}`;
+
+
+    document.getElementById("feedback")
+        .style.display="block";
+
+
+    document.getElementById("next")
+        .style.display="block";
+}
+
+
+/* ==============================
+   CASE YÜKLƏ
+============================== */
+
+function loadCase(){
+
+    clearInterval(timerInterval);
+
+    answered=false;
+
+    const data=cases[currentCase];
+
+
+    document.getElementById("caseNumber")
+        .textContent=
+        `CASE ${currentCase+1} / ${cases.length}`;
+
+
+    document.getElementById("progress")
+        .style.width=
+        `${((currentCase+1)/cases.length)*100}%`;
+
+
+    document.getElementById("title")
+        .textContent=data.title;
+
+
+    document.getElementById("story")
+        .textContent=data.story;
+
+
+    document.getElementById("evidenceList")
+        .innerHTML=
+        data.evidence
+        .map(item=>
+            `<div class="evidence-item">
+                ▸ ${item}
+             </div>`
+        )
+        .join("");
+
+
+    document.getElementById("question")
+        .textContent=data.question;
+
+
+    const answers=
+        document.getElementById("answers");
+
+    answers.innerHTML="";
+
+
+    /*
+       Cavabları qarışdırırıq.
+       Beləliklə düzgün cavab
+       hər dəfə A/B/C/D-dən
+       fərqli birində ola bilər.
+    */
+
+    const shuffled=
+        data.answers
+        .map((text,index)=>({
+            text:text,
+            originalIndex:index
+        }))
+        .sort(()=>Math.random()-0.5);
+
+
+    shuffled.forEach((item,index)=>{
+
+        const button=
+            document.createElement("button");
+
+        button.className="answer";
+
+
+        button.innerHTML=
+            `<strong>
+                ${String.fromCharCode(65+index)})
+             </strong>
+             ${item.text}`;
+
+
+        button.onclick=
+            ()=>selectAnswer(
+                item.originalIndex,
+                button
+            );
+
+
+        answers.appendChild(button);
+
+    });
+
+
+    document.getElementById("feedback")
+        .style.display="none";
+
+
+    document.getElementById("next")
+        .style.display="none";
+
+
+    startTimer();
+}
+
+
+/* ==============================
+   CAVAB SEÇİLİR
+============================== */
+
+function selectAnswer(index,button){
+
+    if(answered)return;
+
+    answered=true;
+
+    clearInterval(timerInterval);
+
+    const data=cases[currentCase];
+
+
+    const buttons=
+        document.querySelectorAll(".answer");
+
+
+    buttons.forEach(b=>{
+        b.disabled=true;
+    });
+
+
+    if(index===data.correct){
+
+        score+=20;
+
+        button.classList.add("correct");
+
+
+        document.getElementById("feedback")
+            .innerHTML=
+            `<div class="feedback-title">
+                ✅ Düzgün cavab — +20 xal
+             </div>
+             ${data.explanation}`;
+
+    }else{
+
+        button.classList.add("wrong");
+
+
+        buttons.forEach(b=>{
+
+            const text=
+                b.textContent
+                .replace(/^[A-D]\)\s*/,"")
+                .trim();
+
+
+            if(text===data.answers[data.correct]){
+
+                b.classList.add("correct");
+
+            }
+
+        });
+
+
+        document.getElementById("feedback")
+            .innerHTML=
+            `<div class="feedback-title">
+                ❌ Cavab düzgün deyil — 0 xal
+             </div>
+             ${data.explanation}`;
+    }
+
+
+    document.getElementById("score")
+        .textContent=score;
+
+
+    document.getElementById("feedback")
+        .style.display="block";
+
+
+    document.getElementById("next")
+        .style.display="block";
+}
+
+
+/* ==============================
+   NÖVBƏTİ CASE
+============================== */
+
+document.getElementById("next")
+.onclick=function(){
+
+    clearInterval(timerInterval);
+
+    currentCase++;
+
+
+    if(currentCase<cases.length){
+
+        loadCase();
+
+    }else{
+
+        showResult();
+
+    }
+
+};
+
+
+/* ==============================
+   NƏTİCƏ
+============================== */
+
+function showResult(){
+
+    clearInterval(timerInterval);
+
+
+    document.getElementById("game")
+        .style.display="none";
+
+
+    document.getElementById("result")
+        .style.display="block";
+
+
+    document.getElementById("finalScore")
+        .textContent=
+        `${score} / 100`;
+
+
+    let text;
+
+
+    if(score===100){
+
+        text=
+        "🏆 Mükəmməl! Bütün AML case-lərini düzgün analiz etdin.";
+
+    }else if(score>=80){
+
+        text=
+        "🔥 Çox yaxşı nəticə! Risk, KYC, BO və transaction monitoring məntiqini yaxşı tətbiq etdin.";
+
+    }else if(score>=60){
+
+        text=
+        "👏 Yaxşı nəticə. Case-lərdə bütün risk faktorlarını birlikdə qiymətləndirməyə çalış.";
+
+    }else{
+
+        text=
+        "🔎 Yenidən oynayaraq nəticəni yaxşılaşdıra bilərsən. Variantlar qəsdən bir-birinə yaxın hazırlanıb.";
+    }
+
+
+    document.getElementById("resultText")
+        .textContent=text;
+}
+
+
+/* ==============================
+   YENİDƏN BAŞLA
+============================== */
+
+document.getElementById("restart")
+.onclick=function(){
+
+    clearInterval(timerInterval);
+
+    currentCase=0;
+    score=0;
+
+
+    document.getElementById("score")
+        .textContent="0";
+
+
+    document.getElementById("result")
+        .style.display="none";
+
+
+    document.getElementById("game")
+        .style.display="block";
+
+
+    loadCase();
+};
+
+
+/* ==============================
+   OYUNU BAŞLAT
+============================== */
+
+loadCase();
+
+</script>
+
+</body>
+</html>
